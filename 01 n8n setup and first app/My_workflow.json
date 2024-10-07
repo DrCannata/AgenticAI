@@ -1,0 +1,85 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "796cee9d-5438-4387-af96-91c44b9cbf55",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.manualChatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "agent": "conversationalAgent",
+        "options": {}
+      },
+      "id": "9ef16ae3-0573-4dc7-b076-5cf41b55f700",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        680,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d95709ed-2517-4aee-b2eb-2d3e2b0a1204",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        700,
+        420
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "AYGJw4H9DyM4gKA0",
+          "name": "OpenAi account 1"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b85adc13-b070-4473-99df-c425e4af10f2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c485a00d3376682c3b1fd21a3b2413636f0c307bc52a6caf8086e6fab744c421"
+  },
+  "id": "lNdeAFN8ld4kr8QZ",
+  "tags": []
+}
