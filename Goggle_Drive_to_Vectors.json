@@ -1,0 +1,251 @@
+{
+  "name": "Goggle Drive to Vectors",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "https://docs.google.com/document/d/1pR-KsKsbadO7QP_NS2p1CMl0ZjQ7A6bk72oS5-hnRWs/edit?usp=drive_link",
+          "mode": "url"
+        },
+        "options": {
+          "binaryPropertyName": "data",
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "text/plain"
+            }
+          }
+        }
+      },
+      "id": "d56ab086-9ffe-4c9c-bf1f-ce0df449d813",
+      "name": "Get File Content",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        360,
+        1680
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JCofC7C4KVFlmpFm",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.data }}",
+        "options": {}
+      },
+      "id": "be270a0a-3173-4a1f-9654-158d45b35637",
+      "name": "Default Data Loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        780,
+        1840
+      ]
+    },
+    {
+      "parameters": {
+        "chunkOverlap": 100
+      },
+      "id": "45613479-05a5-4329-a525-deb4e82ca4fe",
+      "name": "Character Text Splitter",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        760,
+        1980
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "id": "640b1c0b-1a52-4fce-9718-7ca5d26d91a7",
+      "name": "Extract from File",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        500,
+        1680
+      ]
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-large",
+        "options": {}
+      },
+      "id": "e0a57314-8d94-46c2-b7ef-b4f802515b71",
+      "name": "Embeddings OpenAI1",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1,
+      "position": [
+        600,
+        1900
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "q25oEFIwP2h4EAcU",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "d1f7aca8-14be-45cb-9230-855ded618328",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        200,
+        1680
+      ]
+    },
+    {
+      "parameters": {
+        "table": {
+          "__rl": true,
+          "value": "Carnot",
+          "mode": "list",
+          "cachedResultName": "Carnot"
+        },
+        "dataMode": "defineBelow",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "pageContent",
+              "value": "={{ $json.pageContent }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d6029aeb-b9eb-4e1f-a542-250666c19c33",
+      "name": "MySQL",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        1040,
+        1680
+      ],
+      "credentials": {
+        "mySql": {
+          "id": "cTAq07QLcxlH9MjX",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "memoryKey": "=user_documents",
+        "clearStore": true
+      },
+      "id": "18daded0-e04c-44d0-96b9-b4bcfaf3da32",
+      "name": "In-Memory Vector Store Inserter",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1,
+      "position": [
+        640,
+        1680
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get File Content": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "In-Memory Vector Store Inserter",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "In-Memory Vector Store Inserter",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get File Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "In-Memory Vector Store Inserter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "In-Memory Vector Store Inserter": {
+      "main": [
+        [
+          {
+            "node": "MySQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "66f1376b-d6f5-4013-aba7-65e491fe2495",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c485a00d3376682c3b1fd21a3b2413636f0c307bc52a6caf8086e6fab744c421"
+  },
+  "id": "5y0MOavnbfjLHXB6",
+  "tags": []
+}
