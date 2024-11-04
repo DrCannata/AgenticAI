@@ -1,0 +1,467 @@
+{
+  "name": "Use Vectors in RAG",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "https://docs.google.com/document/d/1pR-KsKsbadO7QP_NS2p1CMl0ZjQ7A6bk72oS5-hnRWs/edit?usp=sharing",
+          "mode": "url"
+        },
+        "options": {
+          "binaryPropertyName": "data",
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "text/plain"
+            }
+          }
+        }
+      },
+      "id": "9107ce7d-7cb1-4277-8faa-6989febe1db1",
+      "name": "Get File Content",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        360,
+        1680
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "JCofC7C4KVFlmpFm",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.data }}",
+        "options": {}
+      },
+      "id": "ea756af3-65d8-4843-8777-6ecd1d89796f",
+      "name": "Default Data Loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        780,
+        1840
+      ]
+    },
+    {
+      "parameters": {
+        "chunkSize": 500,
+        "chunkOverlap": 100
+      },
+      "id": "fa7bfedd-1c6b-4ad2-84e2-8ab01fe37b1a",
+      "name": "Character Text Splitter",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        820,
+        1980
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "id": "ee24a79a-c26f-49cd-b65a-250625b4650d",
+      "name": "Extract from File",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        500,
+        1680
+      ]
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-large",
+        "options": {}
+      },
+      "id": "84c2f76e-48cc-4260-a89f-d0d3f97c7a2c",
+      "name": "Embeddings OpenAI1",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1,
+      "position": [
+        600,
+        1880
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "q25oEFIwP2h4EAcU",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "704d3a69-e4c6-4e04-9628-7c5c26c0af2c",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        200,
+        1680
+      ]
+    },
+    {
+      "parameters": {
+        "table": {
+          "__rl": true,
+          "value": "Carnot",
+          "mode": "list",
+          "cachedResultName": "Carnot"
+        },
+        "dataMode": "defineBelow",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "pageContent",
+              "value": "={{ $json.pageContent }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3d1dc074-ad37-4975-a954-74bd0be1fd85",
+      "name": "MySQL",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        1040,
+        1680
+      ],
+      "credentials": {
+        "mySql": {
+          "id": "cTAq07QLcxlH9MjX",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "9f600a58-189c-46d1-9e5b-c78ade8a8538",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        360,
+        1520
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "3548a1c9-1b81-41b2-b256-002e1b702a3a",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        180,
+        1500
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "q25oEFIwP2h4EAcU",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "user_documents",
+        "description": "Contains all the user's documents that you can check for context to answer user questions."
+      },
+      "id": "75a81214-0ee8-41b5-8cbf-bb06d3fa1c97",
+      "name": "Retrieve Documents",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        740,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "73df9a0f-d771-439d-9edd-2bbec4f00dcd",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        860,
+        1520
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "q25oEFIwP2h4EAcU",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-large",
+        "options": {}
+      },
+      "id": "2ff5658e-4eb2-44b4-94f4-1e056a4df869",
+      "name": "Embeddings OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1,
+      "position": [
+        680,
+        1540
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "q25oEFIwP2h4EAcU",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "a9d804ae-3435-4a9e-b28f-aab55e5ccde6",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        40,
+        1300
+      ],
+      "webhookId": "d82458a9-fdb2-463b-a71d-19fafb5fcf39"
+    },
+    {
+      "parameters": {
+        "memoryKey": "user_documents"
+      },
+      "id": "cc644b24-f245-4cc5-9e86-86298dc1f8d2",
+      "name": "In-Memory Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1,
+      "position": [
+        600,
+        1420
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "memoryKey": "=user_documents",
+        "clearStore": true
+      },
+      "id": "81636bfe-295e-4cbf-b6ec-401365cc938d",
+      "name": "In-Memory Vector Store Inserter",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1,
+      "position": [
+        640,
+        1680
+      ]
+    },
+    {
+      "parameters": {
+        "content": "Blank:\nhttps://docs.google.com/document/d/1A4Kq3gmTb9skuQ21dJuR67jfkowGaZQAFaQ1urH0-Mk/edit?usp=sharing\n\nMCC and Carnot:\nhttps://docs.google.com/document/d/1pR-KsKsbadO7QP_NS2p1CMl0ZjQ7A6bk72oS5-hnRWs/edit?usp=sharing",
+        "height": 193.48837209302337,
+        "width": 380.33222591362124
+      },
+      "id": "98cdf086-cea9-4782-8874-123bd43f24c8",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -20,
+        1960
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "9a99b3c9-ff5d-44e7-9595-37f2938e7965",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        240,
+        1300
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get File Content": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "In-Memory Vector Store Inserter",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "In-Memory Vector Store Inserter",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get File Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "In-Memory Vector Store Inserter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve Documents": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Retrieve Documents",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "In-Memory Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "In-Memory Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Retrieve Documents",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "In-Memory Vector Store Inserter": {
+      "main": [
+        [
+          {
+            "node": "MySQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "41f31eb3-f8a7-4e90-ad99-6f3f93a84d37",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c485a00d3376682c3b1fd21a3b2413636f0c307bc52a6caf8086e6fab744c421"
+  },
+  "id": "YhVAqTWf0SmZALIk",
+  "tags": []
+}
