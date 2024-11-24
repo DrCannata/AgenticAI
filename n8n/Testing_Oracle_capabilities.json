@@ -1,0 +1,55 @@
+{
+  "name": "Testing Oracle capabilities",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "2a3ee594-601c-477f-9369-d4fbd532978b",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        640,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "import os\nimport uuid\n\ndef generate_unique_filename(base_name=\"file\"):\n    unique_id = uuid.uuid4()\n    return f\"{base_name}_{unique_id}.txt\"\n\nfilename = \"/tmp/\" + generate_unique_filename()\n\n# os.system('sh \"/Users/pcannata/Mine/My Repositories/AI/n8n/SQLclScript.sh\" \"select \\'One\\' as arg\" > ' + filename)\n\n# You can also do an insert.\nos.system('sh \"/Users/pcannata/Mine/My Repositories/AI/n8n/SQLclScript.sh\" \"insert into test (id) values (1)\" > ' + filename)\n\n#with open(filename, \"r\") as test:\n   #print(test.read())\n\nos.system('rm ' + filename)\n\nr = [{\"result\":\"complete\"}]\nreturn r\n"
+      },
+      "id": "e26ca720-0d0d-49ac-bca7-ab8bb5df2496",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        860,
+        320
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "faecd05f-fe1a-4728-a1eb-ee289a5ea633",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4c1fb6cb00b204a3048e092c5e4a546c16ae5f5c46abc1b642054a362de14eb8"
+  },
+  "id": "lKK0Q8eQMBk7RL68",
+  "tags": []
+}
